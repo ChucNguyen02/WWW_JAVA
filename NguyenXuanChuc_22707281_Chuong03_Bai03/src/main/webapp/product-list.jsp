@@ -23,7 +23,7 @@
 <c:forEach items="${products}" var="p">
   <div class="product-card">
     <b>${p.model}</b><br/>
-    <img src="images/${p.imgURL}" alt="${p.model}"><br/>
+    <img src="./images/${p.imgURL}" alt="${p.model}"><br/>
     Price: ${p.price}<br/>
 
     <!-- Add To Cart Form -->

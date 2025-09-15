@@ -28,13 +28,21 @@ public class BookServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String path = req.getServletPath();
+
         if ("/book".equals(path)) {
             int id = Integer.parseInt(req.getParameter("id"));
             Book b = bookDAO.getBookById(id);
             req.setAttribute("book", b);
             req.getRequestDispatcher("chitietsach.jsp").forward(req, resp);
         } else {
-            List<Book> books = bookDAO.getAllBooks();
+            String keyword = req.getParameter("keyword");
+            String minStr = req.getParameter("min");
+            String maxStr = req.getParameter("max");
+
+            Double min = (minStr != null && !minStr.isEmpty()) ? Double.valueOf(minStr) : null;
+            Double max = (maxStr != null && !maxStr.isEmpty()) ? Double.valueOf(maxStr) : null;
+
+            List<Book> books = bookDAO.searchBooks(keyword, min, max);
             req.setAttribute("books", books);
             req.getRequestDispatcher("danhsach.jsp").forward(req, resp);
         }
