@@ -1,7 +1,7 @@
 <Context>
-    <Resource name="jdbc/bookstore" auth="Container" type="javax.sql.DataSource"
+    <Resource name="jdbc/QUANLYDANHMUC" auth="Container" type="javax.sql.DataSource"
               driverClassName="org.mariadb.jdbc.Driver"
-              url="jdbc:mariadb://localhost:3306/bookstore"
+              url="jdbc:mariadb://localhost:3306/QUANLYDANHMUC"
               username="root" password="root"
               maxTotal="20" maxIdle="10" maxWaitMillis="10000"/>
 </Context>
