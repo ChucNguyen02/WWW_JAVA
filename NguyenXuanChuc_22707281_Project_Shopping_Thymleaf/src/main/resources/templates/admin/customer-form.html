@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/admin-layout}">
+<head>
+    <title>Cập nhật thông tin khách hàng</title>
+</head>
+<body>
+<div layout:fragment="content"
+     th:with="pageTitle='Cập nhật khách hàng: ' + (${customer.name} ?: 'N/A')">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form th:action="@{/admin/customers/save}" th:object="${customer}" method="post">
+
+                        <input type="hidden" th:field="*{id}" />
+                        <input type="hidden" th:field="*{customerSince}" />
+
+                        <input type="hidden" th:if="${customer.user != null}" th:field="*{user.id}" />
+
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Lưu ý:</strong> Chỉnh sửa thông tin tại đây (ví dụ: Email, Tên)
+                            có thể không đồng bộ với tài khoản `User` liên kết.
+                            Việc cập nhật thông tin chính nên được thực hiện từ trang hồ sơ cá nhân của người dùng.
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" th:field="*{name}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" th:field="*{email}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" th:field="*{phone}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" th:field="*{address}" rows="3"></textarea>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <a th:href="@{/admin/customers}" class="btn btn-secondary me-2">
+                                Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

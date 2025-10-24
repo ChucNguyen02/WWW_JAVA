@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/admin-layout}">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+<div layout:fragment="content" th:with="pageTitle='Tổng quan'">
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title fs-1" th:text="${totalProducts}">0</h3>
+                            <p class="card-text mb-0">Tổng Sản phẩm</p>
+                        </div>
+                        <i class="bi bi-box-seam-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                    <a th:href="@{/admin/products}" class="text-white stretched-link text-decoration-none">
+                        <small>Xem chi tiết</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title fs-1" th:text="${totalOrders}">0</h3>
+                            <p class="card-text mb-0">Tổng Đơn hàng</p>
+                        </div>
+                        <i class="bi bi-file-earmark-text-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                    <a th:href="@{/admin/orders}" class="text-white stretched-link text-decoration-none">
+                        <small>Xem chi tiết</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title fs-1" th:text="${totalCustomers}">0</h3>
+                            <p class="card-text mb-0">Tổng Khách hàng</p>
+                        </div>
+                        <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                    <a th:href="@{/admin/customers}" class="text-dark stretched-link text-decoration-none">
+                        <small>Xem chi tiết</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title fs-1"
+                                th:text="${orderStats.get(T(iuh.fit.nguyenxuanchuc_22707281_project_shopping_thymleaf.entity.Order.OrderStatus).PENDING)} ?: 0">0</h3>
+                            <p class="card-text mb-0">Đơn hàng chờ xử lý</p>
+                        </div>
+                        <i class="bi bi-hourglass-split" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                    <a th:href="@{/admin/orders(status='PENDING')}" class="text-white stretched-link text-decoration-none">
+                        <small>Xem chi tiết</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <h3 class="mt-5 mb-3">Thống kê đơn hàng</h3>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                    <tr>
+                        <th th:each="status : ${T(iuh.fit.nguyenxuanchuc_22707281_project_shopping_thymleaf.entity.Order.OrderStatus).values()}"
+                            th:text="${status.displayName}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:each="entry : ${orderStats}"
+                            th:text="${entry.value}" class="fs-4 fw-bold"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

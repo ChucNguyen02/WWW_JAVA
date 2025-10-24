@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/admin-layout}">
+<head>
+    <title th:text="'Chi tiết khách hàng: ' + ${customer.name}"></title>
+</head>
+<body>
+<div layout:fragment="content" th:with="pageTitle='Chi tiết khách hàng'">
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header"><h5 class="mb-0">Thông tin cơ bản</h5></div>
+        <div class="card-body">
+            <p><strong>ID:</strong> <span th:text="${customer.id}"></span></p>
+            <p><strong>Họ tên:</strong> <span th:text="${customer.name}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
+            <p><strong>Điện thoại:</strong> <span th:text="${customer.phone}"></span></p>
+            <p><strong>Địa chỉ:</strong> <span th:text="${customer.address}"></span></p>
+            <p><strong>Tài khoản liên kết:</strong>
+                <span th:if="${customer.user != null}" th:text="${customer.user.username}"></span>
+                <span th:unless="${customer.user != null}" class="text-muted">Không có</span>
+            </p>
+            <p><strong>Ngày tham gia:</strong>
+                <span th:text="${#calendars.format(customer.customerSince, 'dd/MM/yyyy')}"></span>
+            </p>
+        </div>
+    </div>
+
+    <h4 class="mb-3">Lịch sử đơn hàng (<span th:text="${#lists.size(orders)}"></span>)</h4>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div th:if="${orders.isEmpty()}" class="alert alert-info">
+                Khách hàng này chưa có đơn hàng nào.
+            </div>
+            <div class="table-responsive" th:unless="${orders.isEmpty()}">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="'#' + ${order.id}"></td>
+                        <td th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="fw-bold text-danger"
+                            th:text="${#numbers.formatDecimal(order.getTotal(), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' :
+                                                           (order.status.name() == 'CANCELLED' ? 'bg-danger' :
+                                                            (order.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-info text-dark'))}"
+                                          th:text="${order.status.displayName}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/orders/{id}(id=${order.id})}"
+                               class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/admin/customers}" class="btn btn-secondary">&larr; Quay lại danh sách</a>
+    </div>
+
+</div>
+</body>
+</html>

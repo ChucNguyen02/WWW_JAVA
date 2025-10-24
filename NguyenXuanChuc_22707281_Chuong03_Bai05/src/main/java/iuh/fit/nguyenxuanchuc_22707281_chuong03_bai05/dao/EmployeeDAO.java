@@ -4,7 +4,6 @@ import iuh.fit.nguyenxuanchuc_22707281_chuong03_bai05.model.Employee;
 
 import java.sql.*;
 import java.util.*;
-import java.math.BigDecimal;
 
 public class EmployeeDAO {
 

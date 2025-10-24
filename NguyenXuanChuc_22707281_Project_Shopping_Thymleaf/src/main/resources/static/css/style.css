@@ -1,0 +1,10 @@
+/* src/main/resources/static/css/style.css */
+
+body {
+    background-color: #f9f9f9; /* Thay đổi màu nền để kiểm tra */
+    font-family: Arial, sans-serif;
+}
+
+.card-title {
+    color: #333;
+}

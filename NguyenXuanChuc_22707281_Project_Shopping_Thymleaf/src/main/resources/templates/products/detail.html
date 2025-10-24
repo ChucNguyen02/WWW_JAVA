@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{fragments/layout}">
+
+<head>
+    <title th:text="${product.name}">Chi tiết sản phẩm</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-lg-6">
+            <img src="https://via.placeholder.com/600x600.png?text=Product+Image"
+                 th:alt="${product.name}" class="img-fluid rounded shadow-sm">
+        </div>
+
+        <div class="col-lg-6">
+            <h1 th:text="${product.name}">Tên sản phẩm</h1>
+
+            <h3 class="text-danger my-3">
+                <span th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ
+            </h3>
+
+            <p><strong>Danh mục:</strong>
+                <a th:href="@{/products(categoryId=${product.category.id})}"
+                   th:text="${product.category.name}"></a>
+            </p>
+
+            <p>
+                <strong>Tình trạng:</strong>
+                <span th:if="${product.isInStock()}" class="badge bg-success">Còn hàng</span>
+                <span th:unless="${product.isInStock()}" class="badge bg-danger">Hết hàng</span>
+                <span th:text="' (Còn ' + ${product.stockQuantity} + ' sản phẩm)'"></span>
+            </p>
+
+            <hr>
+
+            <form th:action="@{/cart/add}" method="post" class="row g-3 align-items-center">
+                <input type="hidden" name="productId" th:value="${product.id}" />
+
+                <div class="col-auto">
+                    <label for="quantity" class="form-label">Số lượng:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="number" class="form-control" name="quantity" id="quantity"
+                           value="1" min="1" th:max="${product.stockQuantity}"
+                           style="width: 80px;" th:disabled="${!product.isInStock()}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary btn-lg"
+                            th:disabled="${!product.isInStock()}">
+                        <i class="bi bi-cart-plus-fill"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="productTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Mô tả</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">
+                        Đánh giá
+                        <span class="badge bg-secondary" th:text="${#lists.size(comments)}"></span>
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="productTabContent">
+                <div class="tab-pane fade show active p-3" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <p>(Chưa có mô tả chi tiết cho sản phẩm này)</p>
+                </div>
+
+                <div class="tab-pane fade p-3" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                    <h4 class="mb-3">Đánh giá sản phẩm</h4>
+
+                    <div class="mb-4 p-3 bg-light rounded" sec:authorize="hasRole('USER')">
+                        <h5>Viết đánh giá của bạn</h5>
+                        <form th:action="@{/user/comment/post}" method="post">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <div class="mb-3">
+                                    <textarea class="form-control" name="text" rows="3"
+                                              placeholder="Nhập đánh giá của bạn... (tối đa 1000 ký tự)"
+                                              required maxlength="1000"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </form>
+                    </div>
+
+                    <div class="alert alert-info" sec:authorize="isAnonymous()">
+                        Vui lòng <a th:href="@{/login(redirect=${#httpServletRequest.requestURI})}">đăng nhập</a> để gửi đánh giá.
+                    </div>
+
+                    <div th:if="${comments.isEmpty()}">
+                        <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                    </div>
+
+                    <div th:unless="${comments.isEmpty()}">
+                        <ul class="list-group list-group-flush">
+                            <li th:each="comment : ${comments}" class="list-group-item px-0 py-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1" th:text="${comment.author.username}">Tác giả</h5>
+                                    <small th:text="${#calendars.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+                                </div>
+                                <p class="mb-1" th:text="${comment.text}">Nội dung bình luận.</p>
+
+                                <div class="mt-2"
+                                     sec:authorize="isAuthenticated() and (${#authentication.name == comment.author.username} or hasRole('ADMIN'))">
+
+                                    <form th:action="@{/user/comment/edit}" method="post" class="d-inline-block me-2">
+                                        <input type="hidden" name="commentId" th:value="${comment.id}">
+                                        <input type="hidden" name="productId" th:value="${product.id}">
+                                        <input type="text" name="text" th:value="${comment.text}" class="form-control form-control-sm d-inline-block w-auto">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning"
+                                                sec:authorize="${#authentication.name == comment.author.username}">Sửa</button>
+                                    </form>
+
+                                    <a th:href="@{/user/comment/delete/{id}(id=${comment.id}, productId=${product.id})}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       sec:authorize="${#authentication.name == comment.author.username}"
+                                       onclick="return confirm('Bạn chắc chắn muốn xóa đánh giá này?')">Xóa</a>
+
+                                    <a th:href="@{/admin/comments/delete/{id}(id=${comment.id}, returnUrl=${#request.requestURI})}"
+                                       class="btn btn-sm btn-danger"
+                                       sec:authorize="hasRole('ADMIN')"
+                                       onclick="return confirm('Admin: Bạn chắc chắn muốn xóa đánhGiá này?')">Xóa (Admin)</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5">
+    <div class="row" th:if="${!relatedProducts.isEmpty()}">
+        <h2 class="mb-4">Sản phẩm liên quan</h2>
+        <div th:each="related : ${relatedProducts}" class="col-lg-3 col-md-6 mb-4">
+            <div class="card h-100 text-center">
+                <img src="https://via.placeholder.com/300x300.png?text=Related" class="card-img-top p-3" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${related.name}"></h5>
+                    <p class="card-text text-danger fw-bold"
+                       th:text="${#numbers.formatDecimal(related.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></p>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3">
+                    <a th:href="@{/products/detail/{id}(id=${related.id})}"
+                       class="btn btn-outline-primary">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

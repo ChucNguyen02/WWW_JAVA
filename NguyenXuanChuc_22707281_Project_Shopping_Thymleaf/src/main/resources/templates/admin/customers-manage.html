@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/admin-layout}">
+<head>
+    <title>Quản lý Khách hàng</title>
+</head>
+<body>
+<div layout:fragment="content" th:with="pageTitle='Quản lý Khách hàng'">
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên khách hàng</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Tài khoản User</th>
+                        <th style="width: 150px;">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.id}"></td>
+                        <td th:text="${customer.name}"></td>
+                        <td th:text="${customer.email}"></td>
+                        <td th:text="${customer.phone}"></td>
+                        <td th:text="${customer.user != null ? customer.user.username : 'N/A'}"></td>
+                        <td>
+                            <a th:href="@{/admin/customers/view/{id}(id=${customer.id})}"
+                               class="btn btn-sm btn-info" title="Xem chi tiết">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a th:href="@{/admin/customers/edit/{id}(id=${customer.id})}"
+                               class="btn btn-sm btn-warning" title="Sửa (tạm thời)">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a th:href="@{/admin/customers/delete/{id}(id=${customer.id})}"
+                               class="btn btn-sm btn-danger" title="Xóa"
+                               onclick="return confirm('Xóa khách hàng này sẽ xóa cả tài khoản user và các đơn hàng liên quan! Bạn chắc chứ?')">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Hồ sơ cá nhân</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="mb-4">Hồ sơ cá nhân</h1>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h4 class="mb-3">Thông tin tài khoản</h4>
+
+                    <form th:action="@{/user/profile/update}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" th:value="${user.username}" readonly disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName"
+                                   th:value="${customer.name}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   th:value="${user.email}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="phone" name="phone"
+                                   th:value="${customer.phone}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" id="address" name="address"
+                                      rows="3" th:text="${customer.address}"></textarea>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/user/change-password}" class="btn btn-outline-warning">
+                                Đổi mật khẩu
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Cập nhật thông tin
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

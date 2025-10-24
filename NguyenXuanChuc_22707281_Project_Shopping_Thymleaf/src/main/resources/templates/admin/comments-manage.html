@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/admin-layout}">
+<head>
+    <title>Quản lý Đánh giá</title>
+</head>
+<body>
+<div layout:fragment="content" th:with="pageTitle='Quản lý Đánh giá'">
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Sản phẩm</th>
+                        <th>Người đánh giá</th>
+                        <th>Nội dung</th>
+                        <th>Ngày đăng</th>
+                        <th style="width: 100px;">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}" th:if="${!product.comments.isEmpty()}">
+                        <th:block th:each="comment : ${product.comments}">
+                            <tr>
+                                <td th:text="${comment.id}"></td>
+                                <td>
+                                    <a th:href="@{/products/detail/{id}(id=${product.id})}"
+                                       th:text="${product.name}" target="_blank"></a>
+                                </td>
+                                <td th:text="${comment.author.username}"></td>
+                                <td style="max-width: 300px;"
+                                    class="text-truncate" th:text="${comment.text}"></td>
+                                <td th:text="${#calendars.format(comment.createdAt, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <a th:href="@{/admin/comments/delete/{id}(id=${comment.id}, returnUrl='/admin/comments')}"
+                                       class="btn btn-sm btn-danger" title="Xóa"
+                                       onclick="return confirm('Bạn chắc chắn muốn xóa đánh giá này?')">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </th:block>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

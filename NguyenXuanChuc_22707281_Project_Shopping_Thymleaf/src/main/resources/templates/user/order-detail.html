@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title th:text="'Chi tiết đơn hàng #' + ${order.id}">Chi tiết đơn hàng</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="mb-4">
+        Chi tiết đơn hàng #<span th:text="${order.id}"></span>
+    </h1>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header"><h5 class="mb-0">Thông tin chung</h5></div>
+                <div class="card-body">
+                    <p><strong>Ngày đặt:</strong>
+                        <span th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+                    <p><strong>Trạng thái:</strong>
+                        <span class="badge"
+                              th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' :
+                                                   (order.status.name() == 'CANCELLED' ? 'bg-danger' :
+                                                    (order.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-info text-dark'))}"
+                              th:text="${order.status.displayName}"></span>
+                    </p>
+                    <p><strong>Phương thức thanh toán:</strong>
+                        <span th:text="${order.paymentMethod}"></span></p>
+                    <p><strong>Địa chỉ giao hàng:</strong>
+                        <span th:text="${order.shippingAddress}"></span></p>
+                    <hr>
+                    <p class="fs-5 fw-bold">
+                        Tổng tiền:
+                        <span class="text-danger"
+                              th:text="${#numbers.formatDecimal(order.getTotal(), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                    </p>
+
+                    <div th:if="${order.status.name() == 'PENDING' or order.status.name() == 'PROCESSING'}">
+                        <form th:action="@{/user/orders/cancel/{orderId}(orderId=${order.id})}" method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?')">
+                            <button type="submit" class="btn btn-danger w-100">
+                                Hủy đơn hàng
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header"><h5 class="mb-0">Các sản phẩm đã đặt</h5></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Giá mua</th>
+                                <th>Số lượng</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="line : ${orderLines}">
+                                <td>
+                                    <a th:href="@{/products/detail/{id}(id=${line.product.id})}"
+                                       th:text="${line.product.name}"></a>
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(line.purchasePrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                                <td th:text="${line.amount}"></td>
+                                <td class_="fw-bold"
+                                    th:text="${#numbers.formatDecimal(line.purchasePrice.multiply(T(java.math.BigDecimal).valueOf(line.amount)), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/user/my-orders}" class="btn btn-outline-secondary">
+            &larr; Quay lại danh sách đơn hàng
+        </a>
+    </div>
+</div>
+</body>
+</html>

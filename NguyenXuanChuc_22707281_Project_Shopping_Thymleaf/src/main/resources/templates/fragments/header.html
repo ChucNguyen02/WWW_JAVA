@@ -1,0 +1,72 @@
+<header th:fragment="header" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" th:href="@{/}">ShopOnline</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/}">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/products}">Sản phẩm</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/about}">Giới thiệu</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
+          </li>
+        </ul>
+
+        <form class="d-flex me-3" th:action="@{/products}" method="get">
+          <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Tìm</button>
+        </form>
+
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" th:href="@{/cart}">
+              <i class="bi bi-cart-fill"></i> Giỏ hàng
+            </a>
+          </li>
+
+          <li class="nav-item" sec:authorize="isAnonymous()">
+            <a class="btn btn-outline-info me-2" th:href="@{/login}">Đăng nhập</a>
+          </li>
+          <li class="nav-item" sec:authorize="isAnonymous()">
+            <a class="btn btn-info" th:href="@{/register}">Đăng ký</a>
+          </li>
+
+          <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i>
+              <span sec:authentication="name">Username</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li sec:authorize="hasRole('USER')">
+                <a class="dropdown-item" th:href="@{/user/profile}">Hồ sơ của tôi</a>
+              </li>
+              <li sec:authorize="hasRole('USER')">
+                <a class="dropdown-item" th:href="@{/user/my-orders}">Đơn hàng của tôi</a>
+              </li>
+
+              <li sec:authorize="hasRole('ADMIN')">
+                <a class="dropdown-item fw-bold" th:href="@{/admin}">Trang Quản Trị</a>
+              </li>
+
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form th:action="@{/perform_logout}" method="post" class="d-inline">
+                  <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

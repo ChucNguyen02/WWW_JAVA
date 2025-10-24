@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Đơn hàng của tôi</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="mb-4">Đơn hàng của tôi</h1>
+
+    <div th:if="${orders.isEmpty()}" class="alert alert-info">
+        Bạn chưa có đơn hàng nào.
+    </div>
+
+    <div th:unless="${orders.isEmpty()}" class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="'#' + ${order.id}"></td>
+                        <td th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="fw-bold text-danger"
+                            th:text="${#numbers.formatDecimal(order.getTotal(), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' :
+                                                           (order.status.name() == 'CANCELLED' ? 'bg-danger' :
+                                                            (order.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-info text-dark'))}"
+                                          th:text="${order.status.displayName}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/user/orders/{orderId}(orderId=${order.id})}"
+                               class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
