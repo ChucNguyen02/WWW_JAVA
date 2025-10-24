@@ -1,0 +1,5 @@
+/* main.css - minimal */
+body { background:#f8f9fa; }
+.card-img-top { height:180px; object-fit:cover; }
+.navbar .badge { font-size:0.75rem; }
+.container { max-width:1200px; }
