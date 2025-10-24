@@ -118,7 +118,9 @@ public class CartService {
         CartItem item = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng"));
 
-        if (!item.getCart().getUser().equals(user)) {
+        // So sánh id thay vì equals để tránh so sánh tham chiếu
+        if (item.getCart() == null || item.getCart().getUser() == null || item.getCart().getUser().getId() == null
+                || !item.getCart().getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Bạn không có quyền thao tác giỏ hàng này");
         }
 
@@ -161,7 +163,8 @@ public class CartService {
         CartItem item = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng"));
 
-        if (!item.getCart().getUser().equals(user)) {
+        if (item.getCart() == null || item.getCart().getUser() == null || item.getCart().getUser().getId() == null
+                || !item.getCart().getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Bạn không có quyền thao tác giỏ hàng này");
         }
 

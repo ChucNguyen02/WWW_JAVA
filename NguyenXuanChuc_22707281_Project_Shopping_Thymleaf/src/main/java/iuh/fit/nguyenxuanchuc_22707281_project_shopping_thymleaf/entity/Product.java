@@ -41,13 +41,18 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private Set<OrderLine> orderLines;
 
+    // optimistic locking
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     public boolean isInStock() {
         return stockQuantity > 0;
     }
 
     public void reduceStock(int quantity) {
         if (stockQuantity < quantity) {
-            throw new RuntimeException("Not enough stock for " + name);
+            throw new RuntimeException("Không đủ hàng cho sản phẩm: " + name);
         }
         stockQuantity -= quantity;
     }
