@@ -44,7 +44,8 @@
                             <tr th:each="item : ${cartItems}">
                                 <td class="ps-3">
                                     <div class="d-flex align-items-center">
-                                        <img src="https://via.placeholder.com/80x80" alt="..." style="width: 80px; height: 80px;" class="img-thumbnail me-3">
+                                        <img src="https://via.placeholder.com/80x80" alt="..."
+                                             style="width: 80px; height: 80px;" class="img-thumbnail me-3">
                                         <div>
                                             <h6 class="mb-0" th:text="${item.product.name}"></h6>
                                             <small class="text-muted" th:text="${item.product.category.name}"></small>
@@ -54,7 +55,7 @@
                                 <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                                 <td>
                                     <form th:action="@{/cart/update}" method="post" class="d-flex">
-                                        <input type="hidden" name="cartItemId" th:value="${item.id}" th:if="${isAuthenticated}">
+                                        <input type="hidden" name="cartItemId" th:if="${isAuthenticated}" th:value="${item.id}">
                                         <input type="hidden" name="productId" th:value="${item.product.id}">
 
                                         <input type="number" name="quantity" class="form-control form-control-sm"
@@ -67,7 +68,7 @@
                                 </td>
                                 <td class="fw-bold" th:text="${#numbers.formatDecimal(item.getSubtotal(), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                                 <td class="pe-3">
-                                    <a th:href="@{/cart/remove/{itemId}(itemId=${item.id ?: 0}, productId=${item.product.id})}"
+                                    <a th:href="@{/cart/remove(productId=${item.product.id})}"
                                        class="btn btn-sm btn-outline-danger"
                                        onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?')">
                                         <i class="bi bi-trash-fill"></i>

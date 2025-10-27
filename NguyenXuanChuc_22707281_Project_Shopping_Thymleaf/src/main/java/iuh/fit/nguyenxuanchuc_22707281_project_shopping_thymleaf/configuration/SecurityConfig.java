@@ -88,7 +88,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // tắt CSRF để POST form giỏ hàng không bị chặn
                 .authenticationProvider(daoAuthProvider)
                 .authorizeHttpRequests(authz -> authz
-                        // ✅ Cho phép toàn bộ tính năng dành cho khách (guest)
+                        // Cho phép toàn bộ tính năng dành cho khách (guest)
                         .requestMatchers(
                                 "/", "/home", "/login", "/register", "/access-denied",
                                 "/about", "/contact", // Thêm trang giới thiệu và liên hệ
@@ -97,10 +97,10 @@ public class SecurityConfig {
                                 "/cart/**" // Cho phép mọi thao tác giỏ hàng khi chưa đăng nhập
                         ).permitAll()
 
-                        // ✅ Quyền cho người dùng đã đăng nhập (ROLE_USER)
+                        // Quyền cho người dùng đã đăng nhập (ROLE_USER)
                         .requestMatchers("/user/**", "/my-orders").hasRole("USER")
 
-                        // ✅ Quyền cho quản trị viên
+                        // Quyền cho quản trị viên
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()

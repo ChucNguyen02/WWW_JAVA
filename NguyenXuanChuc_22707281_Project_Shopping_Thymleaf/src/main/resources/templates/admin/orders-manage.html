@@ -7,6 +7,8 @@
 </head>
 <body>
 <div layout:fragment="content">
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0">
             <i class="bi bi-cart-check me-2 text-primary"></i>
@@ -42,11 +44,15 @@
                     </tr>
                     </thead>
                     <tbody>
+
+                    <!-- Khi không có đơn hàng -->
                     <tr th:if="${#lists.isEmpty(orders)}">
                         <td colspan="7" class="text-center text-muted py-4">
                             Chưa có đơn hàng nào
                         </td>
                     </tr>
+
+                    <!-- Danh sách đơn hàng -->
                     <tr th:each="order : ${orders}">
                         <td>
                             <strong>#<span th:text="${order.id}">1</span></strong>
@@ -66,17 +72,18 @@
                             </strong>
                         </td>
                         <td>
-                            <span class="badge bg-info" th:text="${order.paymentMethod}">Payment</span>
+                            <span class="badge bg-info text-dark" th:text="${order.paymentMethod}">Payment</span>
                         </td>
                         <td class="text-center">
-                                    <span class="badge"
-                                          th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning text-dark' :
-                                                          ${order.status.name() == 'PROCESSING'} ? 'bg-info' :
-                                                          ${order.status.name() == 'SHIPPED'} ? 'bg-primary' :
-                                                          ${order.status.name() == 'DELIVERED'} ? 'bg-success' : 'bg-danger'"
-                                          th:text="${order.status.displayName}">
-                                        Status
-                                    </span>
+                            <!-- ĐÃ FIX LỖI ở đây -->
+                            <span class="badge"
+                                  th:classappend="${order.status.name() == 'PENDING' ? 'bg-warning text-dark' :
+                                                   order.status.name() == 'PROCESSING' ? 'bg-info text-dark' :
+                                                   order.status.name() == 'SHIPPED' ? 'bg-primary' :
+                                                   order.status.name() == 'DELIVERED' ? 'bg-success' : 'bg-danger'}"
+                                  th:text="${order.status.displayName}">
+                                Status
+                            </span>
                         </td>
                         <td class="text-center">
                             <a th:href="@{/admin/orders/{id}(id=${order.id})}"
@@ -85,6 +92,7 @@
                             </a>
                         </td>
                     </tr>
+
                     </tbody>
                 </table>
             </div>

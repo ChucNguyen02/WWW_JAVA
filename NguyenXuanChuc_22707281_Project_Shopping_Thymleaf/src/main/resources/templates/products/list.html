@@ -78,9 +78,7 @@
                 <div class="col" th:each="product : ${products}">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="ratio ratio-1x1 bg-light d-flex align-items-center justify-content-center position-relative">
-                            <img src="https://via.placeholder.com/300x300?text=Product"
-                                 class="img-fluid rounded-top object-fit-cover"
-                                 th:alt="${product.name}">
+                            <!-- Ảnh đã bị loại bỏ, chỉ còn màu nền -->
                             <span class="badge bg-danger position-absolute top-0 start-0 m-3 fs-6 px-3 py-2"
                                   th:if="${product.stockQuantity < 10 && product.stockQuantity > 0}">
                                 Còn ít

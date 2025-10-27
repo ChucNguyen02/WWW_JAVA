@@ -79,14 +79,14 @@ public class CartController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
-        return "redirect:/products/detail/" + productId;
+        return "redirect:/cart";
     }
 
     /**
      * Cập nhật số lượng sản phẩm trong giỏ
      */
     @PostMapping("/update")
-    public String updateCartItem(@RequestParam("cartItemId") Integer cartItemId,
+    public String updateCartItem(@RequestParam(value = "cartItemId", required = false) Integer cartItemId,
                                  @RequestParam("productId") Integer productId,
                                  @RequestParam("quantity") Integer quantity,
                                  Principal principal,
@@ -112,8 +112,8 @@ public class CartController {
     /**
      * Xóa sản phẩm khỏi giỏ hàng
      */
-    @GetMapping("/remove/{itemId}")
-    public String removeFromCart(@PathVariable("itemId") Integer itemId,
+    @GetMapping("/remove")
+    public String removeFromCart(@RequestParam("productId") Integer productId,
                                  Principal principal,
                                  HttpSession session,
                                  RedirectAttributes redirectAttributes) {
@@ -121,10 +121,9 @@ public class CartController {
             if (principal != null) {
                 User user = userService.findByUsername(principal.getName())
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-                cartService.removeFromCart(user, itemId);
+                cartService.removeFromCart(user, productId);
             } else {
-                // ✅ Guest: itemId chính là productId
-                cartService.removeFromGuestCart(session, itemId);
+                cartService.removeFromGuestCart(session, productId);
             }
             redirectAttributes.addFlashAttribute("message", "Đã xóa sản phẩm khỏi giỏ hàng!");
         } catch (RuntimeException e) {
