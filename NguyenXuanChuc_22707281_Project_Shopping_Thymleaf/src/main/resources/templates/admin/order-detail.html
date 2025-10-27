@@ -1,111 +1,157 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/admin-layout}">
+      layout:decorate="~{fragments/layout}">
 <head>
-    <title th:text="'Chi tiết đơn hàng #' + ${order.id}"></title>
+    <title>Chi tiết đơn hàng</title>
 </head>
 <body>
-<div layout:fragment="content" th:with="pageTitle='Chi tiết đơn hàng #' + ${order.id}">
+<div layout:fragment="content">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/admin}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/orders}">Đơn hàng</a></li>
+            <li class="breadcrumb-item active">Chi tiết #<span th:text="${order.id}">0</span></li>
+        </ol>
+    </nav>
 
-    <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header"><h5 class="mb-0">Thông tin chung</h5></div>
-                <div class="card-body">
-                    <p><strong>Khách hàng:</strong>
-                        <a th:href="@{/admin/customers/view/{id}(id=${order.customer.id})}"
-                           th:text="${order.customer.name}"></a>
-                    </p>
-                    <p><strong>Ngày đặt:</strong>
-                        <span th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
-                    <p><strong>Phương thức thanh toán:</strong>
-                        <span th:text="${order.paymentMethod}"></span></p>
-                    <p><strong>Địa chỉ giao hàng:</strong>
-                        <span th:text="${order.shippingAddress}"></span></p>
-                    <hr>
-                    <p class="fs-5 fw-bold">
-                        Tổng tiền:
-                        <span class="text-danger"
-                              th:text="${#numbers.formatDecimal(order.getTotal(), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
-                    </p>
+    <div class="row">
+        <!-- Order Info -->
+        <div class="col-lg-8">
+            <!-- Customer Info -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-fill me-2"></i>Thông tin khách hàng
+                    </h5>
                 </div>
-            </div>
-
-            <div class="card shadow-sm border-0">
-                <div class="card-header"><h5 class="mb-0">Cập nhật trạng thái</h5></div>
                 <div class="card-body">
-                    <p><strong>Trạng thái hiện tại:</strong>
-                        <span class="badge"
-                              th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' :
-                                                   (order.status.name() == 'CANCELLED' ? 'bg-danger' :
-                                                    (order.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-info text-dark'))}"
-                              th:text="${order.status.displayName}"></span>
-                    </p>
-
-                    <form th:action="@{/admin/orders/update-status}" method="post"
-                          th:if="${order.status.name() != 'CANCELLED' and order.status.name() != 'DELIVERED'}">
-
-                        <input type="hidden" name="orderId" th:value="${order.id}">
-
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Chọn trạng thái mới:</label>
-                            <select class="form-select" name="status" id="status" required>
-                                <option th:each="st : ${orderStatuses}"
-                                        th:value="${st.name()}"
-                                        th:text="${st.displayName}"
-                                        th:disabled="${st.name() == 'CANCELLED'}"
-                                        th:selected="${st.name() == order.status.name()}"></option>
-                            </select>
-                            <small class="text-muted">Không thể chuyển về 'Đã hủy'.</small>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Họ tên:</strong> <span th:text="${order.customer.name}">Name</span></p>
+                            <p><strong>Email:</strong> <span th:text="${order.customer.email}">Email</span></p>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Cập nhật</button>
-                    </form>
-
-                    <div th:if="${order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED'}"
-                         class="alert alert-info mb-0">
-                        Đơn hàng đã hoàn tất hoặc đã hủy, không thể thay đổi trạng thái.
+                        <div class="col-md-6">
+                            <p><strong>Điện thoại:</strong> <span th:text="${order.customer.phone}">Phone</span></p>
+                            <p><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress}">Address</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-        </div>
-
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header"><h5 class="mb-0">Các sản phẩm trong đơn</h5></div>
+            <!-- Order Items -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-box-seam me-2"></i>Sản phẩm đã đặt
+                    </h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
+                        <table class="table table-hover">
+                            <thead class="table-light">
                             <tr>
                                 <th>Sản phẩm</th>
-                                <th>Giá mua</th>
-                                <th>Số lượng</th>
-                                <th>Thành tiền</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-end">Đơn giá</th>
+                                <th class="text-end">Thành tiền</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="line : ${orderLines}">
-                                <td th:text="${line.product.name}"></td>
-                                <td th:text="${#numbers.formatDecimal(line.purchasePrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
-                                <td th:text="${line.amount}"></td>
-                                <td class_="fw-bold"
-                                    th:text="${#numbers.formatDecimal(line.purchasePrice.multiply(T(java.math.BigDecimal).valueOf(line.amount)), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                <td>
+                                    <strong th:text="${line.product.name}">Product</strong>
+                                </td>
+                                <td class="text-center">
+                                    <span th:text="${line.amount}">0</span>
+                                </td>
+                                <td class="text-end">
+                                    <span th:text="${#numbers.formatDecimal(line.purchasePrice, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                </td>
+                                <td class="text-end">
+                                    <strong th:text="${#numbers.formatDecimal(line.purchasePrice * line.amount, 0, 'COMMA', 0, 'POINT')}">0</strong>đ
                                 </td>
                             </tr>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                                <td class="text-end">
+                                    <h5 class="text-primary mb-0">
+                                        <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                    </h5>
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="mt-4">
-        <a th:href="@{/admin/orders}" class="btn btn-outline-secondary">
-            &larr; Quay lại danh sách đơn hàng
-        </a>
+        <!-- Order Status -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Thông tin đơn hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Mã đơn:</strong> #<span th:text="${order.id}">0</span></p>
+                    <p><strong>Ngày đặt:</strong><br>
+                        <span th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+                    </p>
+                    <p><strong>Thanh toán:</strong><br>
+                        <span class="badge bg-info" th:text="${order.paymentMethod}">Method</span>
+                    </p>
+                    <p><strong>Trạng thái:</strong><br>
+                        <span class="badge fs-6"
+                              th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning text-dark' :
+                                                  ${order.status.name() == 'PROCESSING'} ? 'bg-info' :
+                                                  ${order.status.name() == 'SHIPPED'} ? 'bg-primary' :
+                                                  ${order.status.name() == 'DELIVERED'} ? 'bg-success' : 'bg-danger'"
+                              th:text="${order.status.displayName}">
+                                Status
+                            </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Update Status -->
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Cập nhật trạng thái
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/orders/update-status}" method="post">
+                        <input type="hidden" name="orderId" th:value="${order.id}">
+
+                        <div class="mb-3">
+                            <select name="status" class="form-select" required>
+                                <option th:each="status : ${orderStatuses}"
+                                        th:value="${status.name()}"
+                                        th:text="${status.displayName}"
+                                        th:selected="${order.status.name() == status.name()}">
+                                    Status
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i>Cập nhật
+                            </button>
+                            <a th:href="@{/admin/orders}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>

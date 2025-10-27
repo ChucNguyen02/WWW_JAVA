@@ -1,48 +1,65 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/admin-layout}">
+      layout:decorate="~{fragments/layout}">
 <head>
-    <title>Quản lý Khách hàng</title>
+    <title>Quản lý khách hàng</title>
 </head>
 <body>
-<div layout:fragment="content" th:with="pageTitle='Quản lý Khách hàng'">
+<div layout:fragment="content">
+    <h2 class="fw-bold mb-4">
+        <i class="bi bi-people me-2 text-primary"></i>
+        Quản lý khách hàng
+    </h2>
 
-    <div class="card shadow-sm border-0">
+    <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                     <tr>
                         <th>ID</th>
-                        <th>Tên khách hàng</th>
+                        <th>Họ tên</th>
                         <th>Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Tài khoản User</th>
-                        <th style="width: 150px;">Hành động</th>
+                        <th>Điện thoại</th>
+                        <th>Ngày tham gia</th>
+                        <th class="text-center">Đơn hàng</th>
+                        <th class="text-center">Thao tác</th>
                     </tr>
                     </thead>
                     <tbody>
+                    <tr th:if="${#lists.isEmpty(customers)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            Chưa có khách hàng nào
+                        </td>
+                    </tr>
                     <tr th:each="customer : ${customers}">
-                        <td th:text="${customer.id}"></td>
-                        <td th:text="${customer.name}"></td>
-                        <td th:text="${customer.email}"></td>
-                        <td th:text="${customer.phone}"></td>
-                        <td th:text="${customer.user != null ? customer.user.username : 'N/A'}"></td>
+                        <td th:text="${customer.id}">1</td>
                         <td>
-                            <a th:href="@{/admin/customers/view/{id}(id=${customer.id})}"
-                               class="btn btn-sm btn-info" title="Xem chi tiết">
-                                <i class="bi bi-eye-fill"></i>
-                            </a>
-                            <a th:href="@{/admin/customers/edit/{id}(id=${customer.id})}"
-                               class="btn btn-sm btn-warning" title="Sửa (tạm thời)">
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
-                            <a th:href="@{/admin/customers/delete/{id}(id=${customer.id})}"
-                               class="btn btn-sm btn-danger" title="Xóa"
-                               onclick="return confirm('Xóa khách hàng này sẽ xóa cả tài khoản user và các đơn hàng liên quan! Bạn chắc chứ?')">
-                                <i class="bi bi-trash-fill"></i>
-                            </a>
+                            <strong th:text="${customer.name}">Name</strong>
+                        </td>
+                        <td th:text="${customer.email}">email@example.com</td>
+                        <td th:text="${customer.phone}">Phone</td>
+                        <td>
+                            <span th:text="${#calendars.format(customer.customerSince, 'dd/MM/yyyy')}">Date</span>
+                        </td>
+                        <td class="text-center">
+                                    <span class="badge bg-primary"
+                                          th:text="${customer.orders != null ? #lists.size(customer.orders) : 0}">
+                                        0
+                                    </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                <a th:href="@{/admin/customers/view/{id}(id=${customer.id})}"
+                                   class="btn btn-outline-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/admin/customers/edit/{id}(id=${customer.id})}"
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     </tbody>

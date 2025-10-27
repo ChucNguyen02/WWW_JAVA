@@ -91,6 +91,7 @@ public class SecurityConfig {
                         // ✅ Cho phép toàn bộ tính năng dành cho khách (guest)
                         .requestMatchers(
                                 "/", "/home", "/login", "/register", "/access-denied",
+                                "/about", "/contact", // Thêm trang giới thiệu và liên hệ
                                 "/css/**", "/js/**", "/images/**",
                                 "/products", "/products/detail/**",
                                 "/cart/**" // Cho phép mọi thao tác giỏ hàng khi chưa đăng nhập

@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/admin-layout}">
-
+      layout:decorate="~{fragments/layout}">
 <head>
-    <title>Quản lý Sản phẩm</title>
+    <title>Quản lý sản phẩm</title>
 </head>
-
 <body>
-<div layout:fragment="content" th:with="pageTitle='Quản lý Sản phẩm'">
-
-    <div class="mb-3">
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-box-seam me-2 text-primary"></i>
+            Quản lý sản phẩm
+        </h2>
         <a th:href="@{/admin/products/new}" class="btn btn-primary">
-            <i class="bi bi-plus-circle-fill"></i> Thêm sản phẩm mới
+            <i class="bi bi-plus-circle me-2"></i>Thêm sản phẩm mới
         </a>
     </div>
 
-    <div class="card shadow-sm border-0">
+    <!-- Products Table -->
+    <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -25,38 +27,58 @@
                         <th>ID</th>
                         <th>Tên sản phẩm</th>
                         <th>Danh mục</th>
-                        <th>Giá bán</th>
-                        <th>Tồn kho</th>
-                        <th style="width: 200px;">Hành động</th>
+                        <th class="text-end">Giá</th>
+                        <th class="text-center">Tồn kho</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
                     </tr>
                     </thead>
                     <tbody>
+                    <tr th:if="${#lists.isEmpty(products)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            Chưa có sản phẩm nào
+                        </td>
+                    </tr>
                     <tr th:each="product : ${products}">
-                        <td th:text="${product.id}"></td>
-                        <td th:text="${product.name}"></td>
-                        <td th:text="${product.category.name}"></td>
-                        <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
+                        <td th:text="${product.id}">1</td>
                         <td>
-                            <form th:action="@{/admin/products/update-stock}" method="post" class="d-flex">
-                                <input type="hidden" name="productId" th:value="${product.id}">
-                                <input type="number" name="quantity" class="form-control form-control-sm"
-                                       th:value="${product.stockQuantity}" style="width: 80px;">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary ms-1"
-                                        title="Cập nhật tồn kho">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                </button>
-                            </form>
+                            <strong th:text="${product.name}">Product Name</strong>
                         </td>
                         <td>
-                            <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
-                               class="btn btn-sm btn-warning" title="Sửa">
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
-                            <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
-                               class="btn btn-sm btn-danger" title="Xóa"
-                               onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">
-                                <i class="bi bi-trash-fill"></i>
-                            </a>
+                            <span class="badge bg-secondary" th:text="${product.category.name}">Category</span>
+                        </td>
+                        <td class="text-end">
+                            <strong th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">0đ</strong>
+                        </td>
+                        <td class="text-center">
+                            <span th:text="${product.stockQuantity}">0</span>
+                        </td>
+                        <td class="text-center">
+                                    <span class="badge"
+                                          th:classappend="${product.isInStock()} ? 'bg-success' : 'bg-danger'"
+                                          th:text="${product.isInStock()} ? 'Còn hàng' : 'Hết hàng'">
+                                        Status
+                                    </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a th:href="@{/products/detail/{id}(id=${product.id})}"
+                                   class="btn btn-outline-info"
+                                   title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
+                                   class="btn btn-outline-primary"
+                                   title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+                                   class="btn btn-outline-danger"
+                                   onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')"
+                                   title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     </tbody>

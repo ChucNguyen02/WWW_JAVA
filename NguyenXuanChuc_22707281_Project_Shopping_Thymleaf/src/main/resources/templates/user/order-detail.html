@@ -1,93 +1,155 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head>
-    <title th:text="'Chi tiết đơn hàng #' + ${order.id}">Chi tiết đơn hàng</title>
+    <title>Chi tiết đơn hàng</title>
 </head>
 <body>
 <div layout:fragment="content">
-    <h1 class="mb-4">
-        Chi tiết đơn hàng #<span th:text="${order.id}"></span>
-    </h1>
-
-    <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header"><h5 class="mb-0">Thông tin chung</h5></div>
-                <div class="card-body">
-                    <p><strong>Ngày đặt:</strong>
-                        <span th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
-                    <p><strong>Trạng thái:</strong>
-                        <span class="badge"
-                              th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' :
-                                                   (order.status.name() == 'CANCELLED' ? 'bg-danger' :
-                                                    (order.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-info text-dark'))}"
-                              th:text="${order.status.displayName}"></span>
-                    </p>
-                    <p><strong>Phương thức thanh toán:</strong>
-                        <span th:text="${order.paymentMethod}"></span></p>
-                    <p><strong>Địa chỉ giao hàng:</strong>
-                        <span th:text="${order.shippingAddress}"></span></p>
-                    <hr>
-                    <p class="fs-5 fw-bold">
-                        Tổng tiền:
-                        <span class="text-danger"
-                              th:text="${#numbers.formatDecimal(order.getTotal(), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
-                    </p>
-
-                    <div th:if="${order.status.name() == 'PENDING' or order.status.name() == 'PROCESSING'}">
-                        <form th:action="@{/user/orders/cancel/{orderId}(orderId=${order.id})}" method="post"
-                              onsubmit="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?')">
-                            <button type="submit" class="btn btn-danger w-100">
-                                Hủy đơn hàng
-                            </button>
-                        </form>
-                    </div>
-
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-box-seam me-2"></i>Sản phẩm đã đặt
+                    </h5>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header"><h5 class="mb-0">Các sản phẩm đã đặt</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead>
+                        <table class="table">
+                            <thead class="table-light">
                             <tr>
                                 <th>Sản phẩm</th>
-                                <th>Giá mua</th>
-                                <th>Số lượng</th>
-                                <th>Thành tiền</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-end">Đơn giá</th>
+                                <th class="text-end">Thành tiền</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="line : ${orderLines}">
                                 <td>
-                                    <a th:href="@{/products/detail/{id}(id=${line.product.id})}"
-                                       th:text="${line.product.name}"></a>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://via.placeholder.com/60x60?text=Product"
+                                             class="rounded me-3"
+                                             th:alt="${line.product.name}">
+                                        <div>
+                                            <strong th:text="${line.product.name}">Product</strong>
+                                            <br>
+                                            <small class="text-muted" th:text="${line.product.category.name}">Category</small>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td th:text="${#numbers.formatDecimal(line.purchasePrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
-                                <td th:text="${line.amount}"></td>
-                                <td class_="fw-bold"
-                                    th:text="${#numbers.formatDecimal(line.purchasePrice.multiply(T(java.math.BigDecimal).valueOf(line.amount)), 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+                                <td class="text-center align-middle">
+                                    <span th:text="${line.amount}">0</span>
+                                </td>
+                                <td class="text-end align-middle">
+                                    <span th:text="${#numbers.formatDecimal(line.purchasePrice, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                </td>
+                                <td class="text-end align-middle">
+                                    <strong th:text="${#numbers.formatDecimal(line.purchasePrice * line.amount, 0, 'COMMA', 0, 'POINT')}">0</strong>đ
                                 </td>
                             </tr>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                                <td class="text-end">
+                                    <h5 class="text-primary mb-0">
+                                        <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">0</span>đ
+                                    </h5>
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
+</div>
+
+<!-- Order Info -->
+<div class="col-lg-4">
+    <!-- Delivery Info -->
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                <i class="bi bi-truck me-2"></i>Thông tin giao hàng
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="mb-2"><strong>Địa chỉ:</strong></p>
+            <p class="text-muted" th:text="${order.shippingAddress}">Address</p>
+
+            <p class="mb-2"><strong>Phương thức thanh toán:</strong></p>
+            <span class="badge bg-info" th:text="${order.paymentMethod}">Payment</span>
         </div>
     </div>
 
-    <div class="mt-4">
-        <a th:href="@{/user/my-orders}" class="btn btn-outline-secondary">
-            &larr; Quay lại danh sách đơn hàng
-        </a>
+    <!-- Actions -->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-grid gap-2">
+                <a th:href="@{/user/my-orders}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Quay lại
+                </a>
+
+                <form th:action="@{/user/orders/cancel/{id}(id=${order.id})}" method="post"
+                      th:if="${order.status.name() == 'PENDING' || order.status.name() == 'PROCESSING'}"
+                      onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-x-circle me-2"></i>Hủy đơn hàng
+                    </button>
+                </form>
+
+                <div class="alert alert-info mb-0 mt-3" th:if="${order.status.name() == 'DELIVERED'}">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Đơn hàng đã được giao thành công!
+                </div>
+
+                <div class="alert alert-danger mb-0 mt-3" th:if="${order.status.name() == 'CANCELLED'}">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Đơn hàng đã bị hủy
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+</div>
+</div>
 </body>
-</html>
+</html><li class="breadcrumb-item"><a th:href="@{/user/my-orders}">Đơn hàng của tôi</a></li>
+<li class="breadcrumb-item active">Chi tiết #<span th:text="${order.id}">0</span></li>
+</ol>
+</nav>
+
+<!-- Order Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h4 class="mb-2">
+                    <i class="bi bi-receipt me-2"></i>
+                    Đơn hàng #<span th:text="${order.id}">0</span>
+                </h4>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-calendar me-1"></i>
+                    <span th:text="${#calendars.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                        <span class="badge fs-6 px-3 py-2"
+                              th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning text-dark' :
+                                              ${order.status.name() == 'PROCESSING'} ? 'bg-info' :
+                                              ${order.status.name() == 'SHIPPED'} ? 'bg-primary' :
+                                              ${order.status.name() == 'DELIVERED'} ? 'bg-success' : 'bg-danger'"
+                              th:text="${order.status.displayName}">
+                            Status
+                        </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Order Items -->
+    <div class="col-lg-8">

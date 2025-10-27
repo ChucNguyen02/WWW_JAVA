@@ -1,66 +1,96 @@
-<header th:fragment="header" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" th:href="@{/}">ShopOnline</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="header">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <!-- Logo -->
+      <a class="navbar-brand fw-semibold text-white" th:href="@{/home}">
+        <i class="bi bi-shop me-1"></i> ShopApp
+      </a>
+
+      <!-- Toggle button cho mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Menu bên trái -->
+        <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" th:href="@{/}">Trang chủ</a>
+            <a class="nav-link text-white" th:href="@{/home}">Trang chủ</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:href="@{/products}">Sản phẩm</a>
+            <a class="nav-link text-white" th:href="@{/products}">Sản phẩm</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:href="@{/about}">Giới thiệu</a>
+            <a class="nav-link text-white" th:href="@{/about}">Giới thiệu</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:href="@{/contact}">Liên hệ</a>
+            <a class="nav-link text-white" th:href="@{/contact}">Liên hệ</a>
+          </li>
+
+          <!-- Menu Admin (chỉ hiện với ADMIN) -->
+          <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+            <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
+              Quản trị
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" th:href="@{/admin}">Dashboard</a></li>
+              <li><a class="dropdown-item" th:href="@{/admin/products}">Sản phẩm</a></li>
+              <li><a class="dropdown-item" th:href="@{/admin/categories}">Danh mục</a></li>
+              <li><a class="dropdown-item" th:href="@{/admin/customers}">Khách hàng</a></li>
+              <li><a class="dropdown-item" th:href="@{/admin/orders}">Đơn hàng</a></li>
+            </ul>
           </li>
         </ul>
 
-        <form class="d-flex me-3" th:action="@{/products}" method="get">
-          <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Tìm</button>
+        <!-- Thanh tìm kiếm -->
+        <form class="d-flex me-3" th:action="@{/products}" method="get" role="search">
+          <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Tìm sản phẩm...">
+            <button class="btn btn-light text-primary border" type="submit">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
         </form>
 
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="btn btn-outline-primary me-2" th:href="@{/cart}">
-              <i class="bi bi-cart-fill"></i> Giỏ hàng
+        <!-- Menu bên phải -->
+        <ul class="navbar-nav align-items-center">
+          <!-- Giỏ hàng -->
+          <li class="nav-item me-3 position-relative">
+            <a class="nav-link text-white position-relative" th:href="@{/cart}">
+              <i class="bi bi-cart fs-5"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    th:if="${cartItemCount != null && cartItemCount > 0}"
+                    th:text="${cartItemCount}">0</span>
             </a>
           </li>
 
-          <li class="nav-item" sec:authorize="isAnonymous()">
-            <a class="btn btn-outline-info me-2" th:href="@{/login}">Đăng nhập</a>
-          </li>
-          <li class="nav-item" sec:authorize="isAnonymous()">
-            <a class="btn btn-info" th:href="@{/register}">Đăng ký</a>
-          </li>
+          <!-- Nút đăng nhập/đăng ký (khi chưa đăng nhập) -->
+          <div sec:authorize="!isAuthenticated()" class="d-flex">
+            <a class="btn btn-outline-light me-2" th:href="@{/login}">Đăng nhập</a>
+            <a class="btn btn-light text-primary" th:href="@{/register}">Đăng ký</a>
+          </div>
 
+          <!-- Menu user (khi đã đăng nhập) -->
           <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-person-circle"></i>
-              <span sec:authentication="name">Username</span>
+            <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle me-1"></i>
+              <span sec:authentication="name">User</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li sec:authorize="hasRole('USER')">
-                <a class="dropdown-item" th:href="@{/user/profile}">Hồ sơ của tôi</a>
-              </li>
-              <li sec:authorize="hasRole('USER')">
-                <a class="dropdown-item" th:href="@{/user/my-orders}">Đơn hàng của tôi</a>
-              </li>
-
-              <li sec:authorize="hasRole('ADMIN')">
-                <a class="dropdown-item fw-bold" th:href="@{/admin}">Trang Quản Trị</a>
-              </li>
-
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" th:href="@{/user/profile}">Hồ sơ cá nhân</a></li>
+              <li><a class="dropdown-item" th:href="@{/user/my-orders}">Đơn hàng của tôi</a></li>
+              <li><a class="dropdown-item" th:href="@{/user/change-password}">Đổi mật khẩu</a></li>
               <li><hr class="dropdown-divider"></li>
               <li>
-                <form th:action="@{/perform_logout}" method="post" class="d-inline">
-                  <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
+                <form th:action="@{/perform_logout}" method="post">
+                  <button class="dropdown-item text-danger" type="submit">Đăng xuất</button>
                 </form>
               </li>
             </ul>
@@ -69,4 +99,6 @@
       </div>
     </div>
   </nav>
-</header>
+</div>
+</body>
+</html>

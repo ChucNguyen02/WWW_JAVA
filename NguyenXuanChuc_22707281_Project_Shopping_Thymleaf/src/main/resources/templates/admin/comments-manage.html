@@ -1,54 +1,73 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/admin-layout}">
+      layout:decorate="~{fragments/layout}">
 <head>
-    <title>Quản lý Đánh giá</title>
+    <title>Quản lý đánh giá</title>
 </head>
 <body>
-<div layout:fragment="content" th:with="pageTitle='Quản lý Đánh giá'">
+<div layout:fragment="content">
+    <h2 class="fw-bold mb-4">
+        <i class="bi bi-chat-dots me-2 text-primary"></i>
+        Quản lý đánh giá sản phẩm
+    </h2>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Sản phẩm</th>
-                        <th>Người đánh giá</th>
-                        <th>Nội dung</th>
-                        <th>Ngày đăng</th>
-                        <th style="width: 100px;">Hành động</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="product : ${products}" th:if="${!product.comments.isEmpty()}">
-                        <th:block th:each="comment : ${product.comments}">
-                            <tr>
-                                <td th:text="${comment.id}"></td>
-                                <td>
-                                    <a th:href="@{/products/detail/{id}(id=${product.id})}"
-                                       th:text="${product.name}" target="_blank"></a>
-                                </td>
-                                <td th:text="${comment.author.username}"></td>
-                                <td style="max-width: 300px;"
-                                    class="text-truncate" th:text="${comment.text}"></td>
-                                <td th:text="${#calendars.format(comment.createdAt, 'dd/MM/yyyy')}"></td>
-                                <td>
-                                    <a th:href="@{/admin/comments/delete/{id}(id=${comment.id}, returnUrl='/admin/comments')}"
-                                       class="btn btn-sm btn-danger" title="Xóa"
-                                       onclick="return confirm('Bạn chắc chắn muốn xóa đánh giá này?')">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </th:block>
-                    </tr>
-                    </tbody>
-                </table>
+    <!-- Products with Comments -->
+    <div th:each="product : ${products}">
+        <div th:if="${!#lists.isEmpty(product.comments)}" class="card mb-4">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-box-seam me-2"></i>
+                        <span th:text="${product.name}">Product Name</span>
+                    </h5>
+                    <span class="badge bg-primary">
+                            <span th:text="${#lists.size(product.comments)}">0</span> đánh giá
+                        </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Người dùng</th>
+                            <th>Nội dung</th>
+                            <th>Ngày đăng</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="comment : ${product.comments}">
+                            <td>
+                                <strong th:text="${comment.author.username}">User</strong>
+                            </td>
+                            <td>
+                                <span th:text="${comment.text}">Comment text</span>
+                            </td>
+                            <td>
+                                <small th:text="${#calendars.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Date</small>
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{/admin/comments/delete/{id}(id=${comment.id}, returnUrl='/admin/comments')}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Bạn có chắc muốn xóa đánh giá này?')">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+    </div>
+
+    <!-- No Comments Message -->
+    <div th:if="${#lists.isEmpty(products) || products.stream().allMatch(p -> #lists.isEmpty(p.comments))}"
+         class="text-center py-5">
+        <i class="bi bi-chat-dots fs-1 text-muted mb-3"></i>
+        <h4 class="text-muted">Chưa có đánh giá nào</h4>
     </div>
 </div>
 </body>

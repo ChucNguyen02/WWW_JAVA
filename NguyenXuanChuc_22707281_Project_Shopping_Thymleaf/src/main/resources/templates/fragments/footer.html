@@ -1,10 +1,114 @@
-<!doctype html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <div th:fragment="footer">
-    <footer class="bg-light text-center text-lg-start mt-4">
-      <div class="text-center p-3">
-        &copy; <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> My Shop
-      </div>
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div th:fragment="footer">
+    <footer class="bg-dark text-light pt-5 pb-3 mt-5">
+        <div class="container">
+            <div class="row gy-4">
+                <!-- Thông tin về ShopApp -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-semibold mb-3">
+                        <i class="bi bi-shop-window me-2"></i>ShopApp
+                    </h5>
+                    <p class="text-secondary mb-3">
+                        Hệ thống mua sắm trực tuyến hiện đại, cung cấp đa dạng sản phẩm chất lượng
+                        với giá cả cạnh tranh và dịch vụ khách hàng tận tâm.
+                    </p>
+                    <div class="d-flex gap-3 fs-4">
+                        <a href="#" class="text-light"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Liên kết nhanh -->
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-semibold mb-3">Liên kết</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a th:href="@{/home}" class="link-secondary text-decoration-none">
+                                <i class="bi bi-chevron-right me-1"></i>Trang chủ
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a th:href="@{/products}" class="link-secondary text-decoration-none">
+                                <i class="bi bi-chevron-right me-1"></i>Sản phẩm
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a th:href="@{/about}" class="link-secondary text-decoration-none">
+                                <i class="bi bi-chevron-right me-1"></i>Giới thiệu
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a th:href="@{/contact}" class="link-secondary text-decoration-none">
+                                <i class="bi bi-chevron-right me-1"></i>Liên hệ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Hỗ trợ khách hàng -->
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-semibold mb-3">Hỗ trợ khách hàng</h6>
+                    <ul class="list-unstyled text-secondary">
+                        <li class="mb-2"><i class="bi bi-chevron-right me-1"></i>Chính sách đổi trả</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-1"></i>Hướng dẫn mua hàng</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-1"></i>Chính sách bảo mật</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-1"></i>Điều khoản sử dụng</li>
+                    </ul>
+                </div>
+
+                <!-- Thông tin liên hệ -->
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-semibold mb-3">Liên hệ</h6>
+                    <ul class="list-unstyled text-secondary">
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt-fill me-2 text-light"></i>
+                            12 Nguyễn Văn Bảo, P.4, Gò Vấp, TP.HCM
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone-fill me-2 text-light"></i>
+                            (028) 3894 2929
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-envelope-fill me-2 text-light"></i>
+                            support@shopapp.com
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock-fill me-2 text-light"></i>
+                            8:00 - 22:00 (Thứ 2 - CN)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="border-secondary mt-4 mb-3">
+
+            <!-- Bản quyền -->
+            <div class="row text-center text-md-start align-items-center">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <small class="text-secondary">© 2024 ShopApp. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <small class="text-secondary">
+                        Made with <i class="bi bi-heart-fill text-danger"></i> by Team ShopApp
+                    </small>
+                </div>
+            </div>
+        </div>
     </footer>
-  </div>
+</div>
+</body>
 </html>
